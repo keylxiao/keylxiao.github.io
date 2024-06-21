@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- <head>
+<meta charset="utf-8">
+<meta name="generator" content="Hugo 0.66.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
+<link rel="stylesheet" href="../css/normalize.css">
+<link rel="stylesheet" href="../css/skeleton.css">
+<link rel="stylesheet" href="../css/custom.css">
+<link rel="alternate" href="index.xml" type="application/rss+xml" title="Speech Research">
+<link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+
+<title >CoMoSpeech: One-Step Speech and Singing Voice Synthesis via Consistency Model - Speech Research</title>
+</head> -->
+<head>
+	<meta charset="utf-8">
+	<meta name="generator" content="Hugo 0.88.1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href=""https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
+  
+	<link rel="stylesheet" href="css/custom.css">
+	<link rel="stylesheet" href="css/normalize.css">
+
+	<title>ConSinger: Generate High-Fidelity Singing Voice via Few Steps</title>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<style>
+  .image-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  .leftmargin, .rightmargin {
+    width: 50%;
+  }
+</style>
+ 
+<div class="container">
+  
+
+	<header role="banner">
+		
+			
+		
+		
+	</header>
+
+
+	<main role="main">
+		<article itemscope itemtype="https://schema.org/BlogPosting">
+
+            <h1 class="entry-title" itemprop="headline" align="center" ><font color="000093"  ><b>ConSinger: Generate High-Fidelity Singing Voice via Few Steps</b></font></h1>
+			
+			<section itemprop="entry-text">
+				<br>
+
+<div class="container pt-5 mt-5 shadow p-5 mb-5 bg-white rounded"> 
+
+  <h2 id="abstract" style="text-align:center;"><font color="000093">Abstract</font></h2>
+  <style>
+    .centered-link {
+      text-align: center;
+    }
+  </style>
+  
+  <p style="text-align: justify;"><font color="061E61">Singing voice synthesis (SVS) system is expected to generate high-fidelity singing voice from given musical scores (e.g., lyrics, duration and pitch). Recently, diffusion models have performed well in this field. However, sacrificing inference speed to exchange with high quality sample generation has limited its application scenarios. In order to obtain high-quality synthetic singing voice more efficiently, we propose a singing voice synthesis method based on consistency model, ConSinger, to achieve high-quality singing voice synthesis via few steps. The model is trained by applying consistency constraint and the generation quality is greatly improved at the expense of a small amount of inference speed. Our experiments show that ConSinger is highly competitive with the baseline model in terms of generation speed and quality. Extended experiments also prove that the proposed method can be extended to text-to-speech task (ConSpeech).</font></p>
+  <!-- <br></br> -->
+  <figure>
+    <div class="image-container">
+      <img src="consinger/train.png" alt="Train Image" class="leftmargin"/>
+      <img src="consinger/infer.png" alt="Inference Image" class="rightmargin"/>
+    </div>
+
+  <figcaption class="center">
+  The Training & inference pipeline of ConSinger
+  </figcaption>
+  </figure>
+  <!-- <br></br> -->
+</div>
+
+<div class="container pt-5 mt-5 shadow p-5 mb-5 bg-white rounded"> 
+  <!-- </ul> -->
+  <h2 id="SVS" style="text-align:center;"><font color="000093">Singing voice synthesis</font></h2> 
+  <p style="text-align: justify;"><font color="061E61"> The below audio samples show the comparison between ground-truth (GT), GT(mel + HiFiGAN), FFTSinger, DiffSinger, ConSinger(v3). Samples are selected from the test dataset of PopCS.</font></p> 
+  <br></br>
+   
+   
+  
+  <p><em><font color="061E61">Sample 1: 倘若我心中的山水，你眼中都看到，我便一步一莲花祈祷 </font></em></p>
+  
+  <table align="center">
+  <thead>
+  <tr>
+  <th style="font-weight: normal;text-align: center">GT</th>
+  <th style="font-weight: normal;text-align: center">GT (mel + HiFiGAN)</th>
+  <th style="font-weight: normal;text-align: center">FFTSinger <br> (GM:1+0, RTF:0.0166)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/gt1.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/gt(m+h)1.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/fs1.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+   
+  </tr>
+  </tbody>
+  </table>
+  
+  <table align="center">
+  <thead>
+  <tr>
+    <th style="font-weight: normal;text-align: center">DiffSinger <br> (GM:1+51, RTF:0.0516)</th>
+    <th style="font-weight: normal;text-align: center">ConSinger <br> (GM:1+1, RTF:0.0188)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/ds1" autoplay/>Your browser does not support the audio element.</audio></td>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/ct31.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+   
+  </tr>
+  </tbody>
+  </table>
+  
+  
+  <br></br>
+  <p><em><font color="061E61">Sample 2: 没办法好可怕，那个我不像话，一直奋不顾身 </font></em></p>
+  
+  <table align="center">
+  <thead>
+  <tr>
+  <th style="font-weight: normal;text-align: center">GT</th>
+  <th style="font-weight: normal;text-align: center">GT (mel + HiFiGAN)</th>
+  <th style="font-weight: normal;text-align: center">FFTSinger <br> (GM:1+0, RTF:0.0166)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/gt2.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/gt(m+h)2.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/fs2.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+   
+  </tr>
+  </tbody>
+  </table>
+  
+  <table align="center">
+  <thead>
+  <tr>
+    <th style="font-weight: normal;text-align: center">DiffSinger <br> (GM:1+51, RTF:0.0516)</th>
+    <th style="font-weight: normal;text-align: center">ConSinger <br> (GM:1+1, RTF:0.0188)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/ds2" autoplay/>Your browser does not support the audio element.</audio></td>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/ct32.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+   
+  </tr>
+  </tbody>
+  </table>
+  
+  <br></br>
+  <br></br>
+  <p><em><font color="061E61">Sample 3: 抱一抱，就当作从没有在一起，好不好，要解释都已经来不及 </font></em></p>
+  
+  <table align="center">
+  <thead>
+  <tr>
+  <th style="font-weight: normal;text-align: center">GT</th>
+  <th style="font-weight: normal;text-align: center">GT (mel + HiFiGAN)</th>
+  <th style="font-weight: normal;text-align: center">FFTSinger <br> (GM:1+0, RTF:0.0166)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/gt4.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/gt(m+h)4.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/fs4.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+   
+  </tr>
+  </tbody>
+  </table>
+  
+  <table align="center">
+  <thead>
+  <tr>
+    <th style="font-weight: normal;text-align: center">DiffSinger <br> (GM:1+51, RTF:0.0516)</th>
+    <th style="font-weight: normal;text-align: center">ConSinger <br> (GM:1+1, RTF:0.0188)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/ds4" autoplay/>Your browser does not support the audio element.</audio></td>
+  <td style="text-align: center"><audio controls="controls" ><source src="consinger/ct34.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+   
+  </tr>
+  </tbody>
+  </table>
+   
+  </div>
+
+<div class="container pt-5 mt-5 shadow p-5 mb-5 bg-white rounded"> 
+<h2 id="TTS" style="text-align:center;"><font color="000093">Text-to-speech</font></h2>
+<p style="text-align: justify;"><font color="061E61"> The below audio samples show the comparison between ground-truth (GT), GT(mel + HiFiGAN), FastSpeech2, DiffSpeech, ConSinger(v2). Samples are selected from the test dataset of LJSpeech.</font></p>
+<ul style="list-style-type:square">
+</ul>
+
+<br></br>
+<p><em><font color="061E62">Sample 1: Printing, in the only sense with which we are at present concerned, differs from most if not from all the arts and crafts represented in the Exhibition</font></em></p>
+<table align="center">
+<thead>
+<tr>
+<th style="font-weight: normal;text-align: center">GT</th>
+<th style="font-weight: normal;text-align: center">GT (mel + HiFiGAN)</th>
+<th style="font-weight: normal;text-align: center">FastSpeech 2 <br> (GM:1+0, RTF: 0.0211)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style=" text-align: center"><audio controls="controls" ><source src="conspeech/gt1.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+<td style=" text-align: center"><audio controls="controls" ><source src="conspeech/gt(m+h)1.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+<td style=" text-align: center"><audio controls="controls" ><source src="conspeech/fs1.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+</tr>
+</tbody>
+</table>
+
+<table align="center">
+<thead>
+<tr>
+<th style="font-weight: normal;text-align: center">DiffSpeech <br> (GM: 1+71, RTF:0.1166)</th>
+<th style="font-weight: normal;text-align: center">ConSpeech (v2) <br> (GM: 1+1, RTF:0.0245)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style=" text-align: center"><audio controls="controls" ><source src="conspeech/ds1.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+<td style=" text-align: center"><audio controls="controls" ><source src="conspeech/ct1.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+</tr>
+</tbody>
+</table>
+<br></br>
+<p><em><font color="061E62">Sample 2: so were candles, salt, pepper, mops and brooms. But the latter could have been of little service. Dirt prevailed everywhere</font></em></p>
+<table align="center">
+<thead>
+<tr>
+<th style="font-weight: normal;text-align: center">GT</th>
+<th style="font-weight: normal;text-align: center">GT (mel + HiFiGAN)</th>
+<th style="font-weight: normal;text-align: center">FastSpeech 2 <br> (GM:1+0, RTF: 0.0211)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style=" text-align: center"><audio controls="controls" ><source src="conspeech/gt2.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+<td style=" text-align: center"><audio controls="controls" ><source src="conspeech/gt(m+h)2.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+<td style=" text-align: center"><audio controls="controls" ><source src="conspeech/fs2.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+</tr>
+</tbody>
+</table>
+
+<table align="center">
+<thead>
+<tr>
+<th style="font-weight: normal;text-align: center">DiffSpeech <br> (GM: 1+71, RTF:0.1166)</th>
+<th style="font-weight: normal;text-align: center">ConSpeech (v2) <br> (GM: 1+1, RTF:0.0245)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style=" text-align: center"><audio controls="controls" ><source src="conspeech/ds2.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+<td style=" text-align: center"><audio controls="controls" ><source src="conspeech/ct2.wav" autoplay/>Your browser does not support the audio element.</audio></td>
+</tr>
+</tbody>
+</table>
+</div>
+ 
+ 
+
+ 
+
+<div class="container pt-5 mt-5 shadow p-5 mb-5 bg-white rounded"> 
+<h2 id="SVS" style="text-align:center;" ><font color="000093">Ablation Studies</font></h2> 
+<p style="text-align: justify;"><font color="061E61">  ConSinger was inspired by an ablation experiment. When performing ablation experiments on our model, we found that the result quality restored by ConSinger(v2)
+  is not simply linear with the level of noise on both SVS and TTS.</font></p>  
+
+<p align="center"><img src="consinger/fad with gt.png" width="70%"  class="center"/></p>
+
+<p style="text-align: justify;"><font color="061E61">  We change the parameter ρ and generate results at different noise levels. Due to consistency model itself, different ρ will cause PF ODE to have different lengths</font></p>
+
+  <p align="center"><img src="consinger/rho1-7.png" width="80%"  class="center"/></p>
+
+  <p style="text-align: justify;"><font color="061E61"></font>  Same as DiffSinger, ConSinger (v2 & v3) denoise prior knowledge with noise to get better results. That is, the supplementary decoder provides the mel-spectrogram skeleton for the model, the addition of a small amount of noise on this basis helps the denoiser to perform a more elaborate carving. Our experimental results show that DiffSinger does not fully exploit the performance of the network by predicting and denoising a small amount of noise at a time, and therefore it consumes abundant inference time. Please refer to the paper for more technical details and explanations.</font></p>
+</div>
+
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-139981676-1', 'auto');
+	ga('send', 'pageview');
+</script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+<script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+         HTML: ["input/TeX","output/HTML-CSS"],
+         TeX: {
+                Macros: {
+                         bm: ["\\boldsymbol{#1}", 1],
+                         argmax: ["\\mathop{\\rm arg\\,max}\\limits"],
+                         argmin: ["\\mathop{\\rm arg\\,min}\\limits"]},
+                extensions: ["AMSmath.js","AMSsymbols.js"],
+                equationNumbers: { autoNumber: "AMS" } },
+         extensions: ["tex2jax.js"],
+         jax: ["input/TeX","output/HTML-CSS"],
+         tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true },
+         "HTML-CSS": { availableFonts: ["TeX"],
+                       linebreaks: { automatic: true } }
+     });
+ </script>
+
+ <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       tex2jax: {
+         skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+       }
+     });
+ </script>
+
+ <script type="text/javascript" async
+   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+ </script>
+
+
+
+
+</body>
+</html>
